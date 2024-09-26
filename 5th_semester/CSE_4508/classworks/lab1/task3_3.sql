@@ -1,0 +1,30 @@
+CREATE OR REPLAC PROCEDURE GET_GRADE
+(
+    P_STUDENT_ID IN NUMBER,
+    P_GRADE OUT VARCHAR2
+)
+AS
+    V_TOTAL NUMBER(3);
+
+BEGIN
+    COUNT_TOTAL(P_STUDENT_ID, V_TOTAL);
+    IF V_TOTAL >= 80 THEN
+        P_GRADE := 'A';
+    ELSIF V_TOTAL >= 70 THEN
+        P_GRADE := 'B';
+    ELSIF V_TOTAL >= 60 THEN
+        P_GRADE := 'C';
+    ELSIF V_TOTAL >= 40 THEN
+        P_GRADE := 'D';
+    ELSE
+        P_GRADE := 'F';
+    END IF;
+END GET_GRADE;
+
+DECLARE
+    V_GRADE VARCHAR2(1);
+BEGIN
+    GET_GRADE(1, V_GRADE);
+    DBMS_OUTPUT.PUT_LINE('The grade of student 1 is: '
+                         || V_GRADE);
+END;
