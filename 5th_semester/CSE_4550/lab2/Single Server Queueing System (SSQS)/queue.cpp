@@ -1,15 +1,14 @@
 #include "queue.h"
 
-Queue :: Queue ()
+Queue ::Queue()
 {
     head_ = tail_ = 0;
     length_ = 0;
 }
 
-void
-Queue :: enque (Item *im)
+void Queue ::enque(Item *im)
 {
-    Item* it = tail_;
+    Item *it = tail_;
 
     if (!tail_)
     {
@@ -25,13 +24,13 @@ Queue :: enque (Item *im)
     ++length_;
 }
 
-Item*
-Queue :: deque ()
+Item *
+Queue ::deque()
 {
     if (!head_)
         return 0;
 
-    Item* it = head_;
+    Item *it = head_;
     head_ = it->next_;
     if (it == tail_)
         head_ = tail_ = 0;
