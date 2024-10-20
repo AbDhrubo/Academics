@@ -1,0 +1,110 @@
+﻿/etcroostep-1:
+      rpm -qa | grep bind
+      rpm -ivh bind-9.3.3*
+      rpm -ivh bind-utils-9.3.3-*
+      rpm -ivh bind-chroot-9.3.3
+      rpm -ivh caching-nameserver-9.3.3
+step-2:
+      cd /usr/share/doc/bind-9.3.3/sample/etc/
+      cp named.rfc1912.zones	/var/named/chroot/etc/named.conf
+
+step-3:
+      vim /var/named/chroot/etc/named.conf
+      Add the following three lines
+
+	options {
+	directory "/var/named/";
+	};
+
+	Edit the following portion by providing domain name and IP 
+
+
+	zone "cse.com" IN {
+        	type master;
+        	file "cse.fz";
+        	allow-update { none; };
+	};
+
+
+
+	zone "46.220.10.in-addr.arpa" IN {
+		type master;
+		file "cse.rz";
+		allow-update { none; };
+	};
+
+step-4:
+      cd /usr/share/doc/bind-9.3.6/sample/var/named/
+      cp localhost.zone /var/named/chroot/var/named/cse.fz
+      vim alinsoft.fz
+      $TTL 86400
+      @            IN SOA ns1.cse.com. root@cse.com. (
+                          42          ; serial (d. adams)
+                          3H           ; refresh
+                          15M            ; retry
+                          1W            ; expiry
+                          1D )         ; minimum
+           IN NS      ns1.cse.com.
+           IN NS      cse.com.
+           IN A       192.168.3.100
+           IN MX 10 mail.cse.com.
+      	   ns1          IN A           192.168.3.100
+      	   www          IN A           192.168.3.101
+      	   mail         IN A           192.168.3.102
+      	   ftp         	IN CNAME       ns1
+step-5:
+      vim cse.rz
+      $TTL 86400
+      @      IN      SOA      ns1.cse.com. root@cse.com. (
+                          1997022700 ; Serial
+                          28800 ; Refresh
+                          14400 ; Retry
+                          3600000 ; Expire
+                          86400 ) ; Minimum
+      IN     NS ns1.cse.com.
+      IN     MX 10 mail.cse.com.
+      100     IN     PTR      ns1.cse.com.
+      101     IN     PTR      www.cse.com.
+      102     IN     PTR      mail.cse.com.
+
+step-6(server+client):
+      vim /etc/resolv.conf
+      search cse.com
+      nameserver 192.168.3.100
+
+step-7:
+      vim /etc/hosts
+      Add the following line
+
+	10.220.46.63	ns1.cse.com	ns1
+step-8:
+       chgrp named /var/named/chroot/var/named/cse.*
+       chmod +x /var/named/chroot/var/named/cse.*
+       chown named /var/named/chroot/etc/named.conf
+step-9:
+      named-checkconf –t /var/named/chroot
+      named-checkzone cse.com /var/named/chroot/var/named/cse.fz
+      named-checkzone cse.com /var/named/chroot/var/named/cse.rz
+
+step-10:
+       service network restart
+       service named restart
+       chkconfig named on
+       dig alinsoft.com
+       dig ns1.cse.com
+       dig -x 192.168.3.100
+       host ns1.cse.com
+       host –t NS cse.com
+       host –t MX cse.com
+       host –t SOA cse.com
+       host –t A cse.com
+       nslookup
+       >set type=any
+       >cse.com
+       >set type=SOA
+       >cse.com
+       >set type=MX
+       >cse.com
+       >set type=NS
+       >cse.com
+       >exit
