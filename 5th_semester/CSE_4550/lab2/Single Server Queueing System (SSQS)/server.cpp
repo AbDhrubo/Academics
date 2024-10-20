@@ -8,23 +8,18 @@
 using namespace std;
 
 Server ::Server() : a_(this), d_(this)
+                                  Server ::Server() : a_(this), d_(this)
 {
+    queue_ = new Queue();
     queue_ = new Queue();
 }
 
-// double
-// Server ::exponential(double mean)
-// {
-
-//     double r = (double)rand() / (RAND_MAX + 1.0);
-//     double ex = -log(r) / mean;
-//     return ex;
-// }
-
-double Server::exponential(double mean)
+double
+Server ::exponential(double mean)
 {
+
     double r = (double)rand() / (RAND_MAX + 1.0);
-    double ex = -mean * log(r);
+    double ex = -log(r) / mean;
     return ex;
 }
 
