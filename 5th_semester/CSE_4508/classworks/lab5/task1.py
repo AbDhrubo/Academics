@@ -15,6 +15,3 @@ print('location')
 print(f'city: {city}')
 print(f'street: {location['address']['street']}')
 print(f'postal code: {location['address']['postalCode']}')
-# for l in location:
-#     for m in l:
-#         print(f'{l} {location[l][m]}')
